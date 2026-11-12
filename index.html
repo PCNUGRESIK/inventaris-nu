@@ -577,8 +577,15 @@
     // ==========================================
     // API WRAPPER
     // ==========================================
-    async function fetchAPI(action, payload = {}) {
+   async function fetchAPI(action, payload = {}) {
         payload.action = action;
+        
+        // SELALU SISIPKAN TOKEN SESI KE DALAM PAYLOAD PADA SETIAP REQUEST
+        const currentSession = localStorage.getItem('sessionId');
+        if (currentSession) {
+            payload.sessionId = currentSession;
+        }
+
         try {
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',

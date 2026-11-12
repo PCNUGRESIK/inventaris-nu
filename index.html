@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -9,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>    
 <style>
     /* ==================== RESET & VARIABLES ==================== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -25,6 +24,11 @@
         --login-input-bg: rgba(0, 0, 0, 0.5); --login-placeholder: rgba(255, 255, 255, 0.6);
         --login-btn-gradient: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
         --login-btn-shadow: 0 4px 20px rgba(124, 58, 237, 0.5);
+
+        /* Variabel Notice Elegan */
+        --nu-primary:#4f46e5; --nu-primary-dark:#3730a3;
+        --nu-danger:#e11d48;  --nu-danger-dark:#be123c;
+        --nu-text:#0f172a;    --nu-muted:#64748b;
     }
     body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: var(--dark); line-height: 1.6; -webkit-font-smoothing: antialiased; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -168,6 +172,107 @@
         .table-controls { flex-direction: column; align-items: stretch; }
         .table-search { width: 100%; }
     }
+
+    /* ==================== SWEETALERT 2 CUSTOM ELEGAN ==================== */
+    /* Latar blur */
+    div:where(.swal2-container).swal2-backdrop-show,
+    div:where(.swal2-container).swal2-noanimation,
+    .swal2-container.swal2-backdrop-show{
+      background:rgba(15,23,42,.55)!important;
+      backdrop-filter:blur(5px)!important;
+      -webkit-backdrop-filter:blur(5px)!important;
+    }
+
+    /* KOTAK */
+    .swal2-popup:not(.swal2-toast){
+      font-family:'Inter',system-ui,sans-serif!important;
+      width:26rem!important; max-width:92vw!important;
+      padding:2.25rem 2rem 1.75rem!important;
+      border-radius:22px!important;
+      background:#fff!important;
+      border:1px solid rgba(226,232,240,.9)!important;
+      box-shadow:0 30px 70px -15px rgba(15,23,42,.45)!important;
+    }
+
+    /* IKON */
+    .swal2-popup:not(.swal2-toast) .swal2-icon{
+      width:76px!important; height:76px!important;
+      margin:0 auto 1.1rem!important;
+      border:0!important; border-radius:50%!important;
+      background:linear-gradient(135deg,#eef2ff,#e0e7ff)!important;
+      color:var(--nu-primary)!important;
+      box-shadow:0 0 0 8px rgba(79,70,229,.07)!important;
+    }
+    .swal2-popup .swal2-icon .swal2-icon-content{animation:none!important;display:flex!important;align-items:center;justify-content:center;font-size:0!important;}
+    .swal2-popup .swal2-icon.swal2-warning,
+    .swal2-popup .swal2-icon.swal2-error{
+      background:linear-gradient(135deg,#fff1f2,#ffe4e6)!important;
+      color:var(--nu-danger)!important;
+      box-shadow:0 0 0 8px rgba(225,29,72,.07)!important;
+    }
+    .swal2-popup .swal2-icon.swal2-success{
+      background:linear-gradient(135deg,#ecfdf5,#d1fae5)!important;
+      color:#059669!important;
+      box-shadow:0 0 0 8px rgba(5,150,105,.07)!important;
+    }
+    /* sembunyikan elemen bawaan ikon success */
+    .swal2-popup .swal2-icon.swal2-success [class^=swal2-success-line],
+    .swal2-popup .swal2-icon.swal2-success [class^=swal2-success-circular-line],
+    .swal2-popup .swal2-icon.swal2-success .swal2-success-ring,
+    .swal2-popup .swal2-icon.swal2-success .swal2-success-fix{display:none!important;}
+
+    /* TEKS */
+    .swal2-popup:not(.swal2-toast) .swal2-title{
+      font-size:1.35rem!important; font-weight:700!important;
+      color:var(--nu-text)!important; padding:0!important; margin:0 0 .4rem!important;
+    }
+    .swal2-popup:not(.swal2-toast) .swal2-html-container{
+      font-size:.925rem!important; line-height:1.6!important;
+      color:var(--nu-muted)!important; margin:0!important; padding:0 .25rem!important;
+    }
+    .swal2-html-container b{color:var(--nu-text);font-weight:600;}
+
+    /* TOMBOL */
+    .swal2-popup:not(.swal2-toast) .swal2-actions{
+      margin-top:1.6rem!important; gap:.75rem!important; width:100%!important; flex-wrap:nowrap!important;
+    }
+    .swal2-popup .swal2-confirm,
+    .swal2-popup .swal2-cancel{
+      flex:1!important; margin:0!important;
+      font-family:inherit!important; font-size:.9rem!important; font-weight:600!important;
+      padding:.8rem 1rem!important; border-radius:12px!important; border:0!important;
+      box-shadow:none!important; cursor:pointer;
+      transition:transform .15s ease, box-shadow .2s ease, background .2s ease!important;
+    }
+    .swal2-popup .swal2-confirm:active,
+    .swal2-popup .swal2-cancel:active{transform:scale(.97);}
+    .swal2-popup .swal2-confirm{
+      color:#fff!important;
+      background:linear-gradient(135deg,var(--nu-primary),var(--nu-primary-dark))!important;
+      box-shadow:0 8px 18px -6px rgba(79,70,229,.6)!important;
+    }
+    .swal2-popup .swal2-confirm:hover{transform:translateY(-1px);}
+    .swal2-popup .swal2-confirm.nu-danger{
+      background:linear-gradient(135deg,var(--nu-danger),var(--nu-danger-dark))!important;
+      box-shadow:0 8px 18px -6px rgba(225,29,72,.6)!important;
+    }
+    .swal2-popup .swal2-cancel{color:#475569!important;background:#f1f5f9!important;}
+    .swal2-popup .swal2-cancel:hover{background:#e2e8f0!important;}
+    .swal2-popup .swal2-confirm:focus,
+    .swal2-popup .swal2-cancel:focus{box-shadow:0 0 0 3px rgba(79,70,229,.3)!important;}
+
+    /* ANIMASI */
+    .nu-show{animation:nuIn .28s cubic-bezier(.2,.9,.3,1.2)!important;}
+    .nu-hide{animation:nuOut .18s ease-in forwards!important;}
+    @keyframes nuIn{from{opacity:0;transform:translateY(14px) scale(.94);}to{opacity:1;transform:none;}}
+    @keyframes nuOut{to{opacity:0;transform:translateY(8px) scale(.96);}}
+
+    /* Toast */
+    .swal2-popup.swal2-toast{
+      font-family:'Inter',sans-serif!important; border-radius:14px!important;
+      box-shadow:0 14px 30px -10px rgba(15,23,42,.35)!important; padding:.85rem 1.1rem!important;
+    }
+    .swal2-popup.swal2-toast .swal2-title{font-size:.9rem!important;font-weight:600!important;color:var(--nu-text)!important;}
 </style>
 </head>
 <body>
@@ -253,7 +358,7 @@
                     </div>
                 </div>
 
-                <!-- SCAN QR (BYPASS NATIVE CAMERA) -->
+                <!-- SCAN QR -->
                 <div id="scanPage" class="page-content hidden">
                     <div class="table-container">
                         <div class="table-header"><h2 class="table-title">Scan QR Code</h2><button class="btn btn-primary" onclick="toggleScanMode()"><i class="fas fa-camera"></i> Scan Kamera</button></div>
@@ -414,6 +519,46 @@
     // ==========================================
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbye0MbdVze2DSRgTiD_PFYOkOo26sgb9FBdDi0jg52_hB2JUgLWhTqkBMSvutiQDm0/exec';
 
+    // ==========================================
+    // SWEETALERT 2 OVERRIDE (NOTICE ELEGAN)
+    // ==========================================
+    (function () {
+      const svg = (p) => `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+      const ICONS = {
+        logout: svg('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>'),
+        trash:  svg('<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>'),
+        warning:svg('<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'),
+        question:svg('<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>'),
+        info:   svg('<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>'),
+        success:svg('<polyline points="20 6 9 17 4 12"/>'),
+        error:  svg('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'),
+      };
+
+      const originalFire = Swal.fire.bind(Swal);
+      Swal.fire = function (...args) {
+        let o = (args[0] && typeof args[0] === 'object') ? { ...args[0] } : { title: args[0], html: args[1], icon: args[2] };
+        if (o.toast) return originalFire(o);
+
+        const judul = String(o.title || '').toLowerCase();
+        const isLogout = /logout|keluar/.test(judul);
+        const isHapus  = /hapus|delete/.test(judul);
+
+        if (!o.icon && (isLogout || isHapus)) o.icon = isHapus ? 'warning' : 'question';
+        if (o.icon && !o.iconHtml) { o.iconHtml = isHapus ? ICONS.trash : isLogout ? ICONS.logout : ICONS[o.icon]; }
+
+        const danger = isHapus || o.icon === 'warning' || o.icon === 'error';
+        const cc = o.customClass || {};
+
+        return originalFire({
+          buttonsStyling: false, reverseButtons: true, cancelButtonText: 'Batal',
+          showClass: { popup: 'nu-show' }, hideClass: { popup: 'nu-hide' },
+          ...(isHapus && o.showCancelButton ? { focusCancel: true } : {}),
+          ...o,
+          customClass: { ...cc, confirmButton: ((cc.confirmButton || '') + (danger ? ' nu-danger' : '')).trim() },
+        });
+      };
+    })();
+
     // GLOBAL VARIABLES
     let currentUser = null;
     let html5QrCode = null;
@@ -496,7 +641,7 @@
     });
 
     async function logoutUser() {
-        Swal.fire({ title: 'Logout?', showCancelButton: true, confirmButtonText: 'Ya' }).then(async (res) => {
+        Swal.fire({ title: 'Logout?', showCancelButton: true, confirmButtonText: 'Ya, Keluar' }).then(async (res) => {
             if (res.isConfirmed) {
                 await fetchAPI('logout', { sessionId: localStorage.getItem('sessionId') });
                 localStorage.removeItem('sessionId'); 
@@ -640,9 +785,7 @@
     }
 
     function showToast(msg, type = 'info') {
-        const c = document.getElementById('toastContainer');
-        const t = document.createElement('div'); t.className = `toast ${type}`; t.innerHTML = `<div>${msg}</div>`; c.appendChild(t);
-        setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
+        Swal.fire({ toast: true, position: 'top-end', icon: type, title: msg, showConfirmButton: false, timer: 3000, timerProgressBar: true });
     }
 
     // ==========================================
@@ -760,10 +903,10 @@
     }
 
     async function deleteInventaris(id) {
-        Swal.fire({ title: 'Hapus Aset?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Ya' }).then(async (res) => {
+        Swal.fire({ title: 'Hapus Aset?', html: 'Data aset ini akan dihapus secara permanen.', showCancelButton: true, confirmButtonText: 'Ya, Hapus' }).then(async (res) => {
             if (res.isConfirmed) {
                 const api = await fetchAPI('deleteInventaris', { id: id, editorName: currentUser.nama });
-                if(api.success) { showToast('Berhasil', 'success'); fetchAllData(true); }
+                if(api.success) { showToast('Berhasil dihapus', 'success'); fetchAllData(true); }
             }
         });
     }
@@ -847,7 +990,7 @@
         if(res.success) { showToast('Sukses', 'success'); closeUserModal(); fetchAllData(true); } else showToast(res.message, 'error');
     }
     async function deleteUser(id) {
-        Swal.fire({ title: 'Hapus User?', icon: 'warning', showCancelButton: true }).then(async (r) => {
+        Swal.fire({ title: 'Hapus User?', html: 'Pengguna akan dihapus permanen.', showCancelButton: true, confirmButtonText: 'Ya, Hapus' }).then(async (r) => {
             if(r.isConfirmed) { const res = await fetchAPI('deleteUser', { id }); if(res.success){ showToast('Terhapus', 'success'); fetchAllData(true); } }
         });
     }

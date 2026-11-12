@@ -40,6 +40,21 @@
     @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
+    /* ==================== SCROLLBAR GLOBAL & SIDEBAR ==================== */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(203, 213, 225, 0.4); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.8); }
+
+    .sidebar-menu { 
+        flex: 1; padding: 20px 0; overflow-y: auto; 
+        scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent; 
+    }
+    .sidebar-menu::-webkit-scrollbar { width: 4px; }
+    .sidebar-menu::-webkit-scrollbar-track { background: transparent; }
+    .sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
+    .sidebar-menu::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
+
     /* ==================== LOGIN ==================== */
     .login-container { min-height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; position: relative; z-index: 1; padding: 20px; }
     #loginBackgroundOverlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-color: #1e293b; background-size: cover; background-position: center; background-repeat: no-repeat; }
@@ -88,7 +103,6 @@
     .sidebar-brand { color: #fff; font-weight: 800; font-size: 20px; display: flex; align-items: center; gap: 12px; }
     .sidebar-toggle { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .sidebar-toggle:hover { background: rgba(255,255,255,0.2); }
-    .sidebar-menu { flex: 1; padding: 20px 0; overflow-y: auto; }
     .menu-item { padding: 12px 24px; display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.7); text-decoration: none; margin: 4px 12px; border-radius: 10px; transition: all 0.3s; font-weight: 500; font-size: 14px; cursor: pointer; }
     .menu-item:hover { background: rgba(255,255,255,0.1); color: #fff; transform: translateX(4px); }
     .menu-item.active { background: rgba(255,255,255,0.2); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
@@ -378,7 +392,7 @@
                         <div class="table-header">
                             <h2 class="table-title">Data Manajemen Aset</h2>
                             <div style="display:flex; gap:10px;">
-                                <!-- Tombol Export XLSX dihilangkan dari sini -->
+                                <!-- Tombol Export XLSX dihilangkan dari sini karena ada menu khusus -->
                                 <button class="btn btn-secondary" onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> Download PDF</button>
                                 <button class="btn btn-primary" onclick="showAddModal()"><i class="fas fa-plus"></i> Tambah Data</button>
                             </div>

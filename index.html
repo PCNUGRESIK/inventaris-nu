@@ -580,18 +580,24 @@
    async function fetchAPI(action, payload = {}) {
         payload.action = action;
         
-        // SELALU SISIPKAN TOKEN SESI KE DALAM PAYLOAD PADA SETIAP REQUEST
-        const currentSession = localStorage.getItem('sessionId');
-        if (currentSession) {
-            payload.sessionId = currentSession;
-        }
-
+        // SELALU SISIPKAN SESSION ID (KUNCI MASUK) KE DALAM PAYLOAD
+        payload.sessionId = localStorage.getItem('sessionId') || '';
+        
         try {
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify(payload)
             });
-            return await response.json();
+            const data = await response.json();
+            
+            // Auto-logout jika backend menolak sesi (karena kadaluarsa atau ditembak dari luar)
+            if (data.message && data.message.includes("Akses Ditolak")) {
+                localStorage.removeItem('sessionId');
+                currentUser = null;
+                showLogin();
+            }
+            
+            return data;
         } catch (error) {
             console.error(error);
             return { success: false, message: 'Koneksi ke server API gagal.' };

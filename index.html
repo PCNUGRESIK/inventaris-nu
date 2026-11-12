@@ -644,12 +644,18 @@
     });
 
     async function logoutUser() {
-        Swal.fire({ title: 'Logout?', showCancelButton: true, confirmButtonText: 'Ya, Keluar' }).then(async (res) => {
+        Swal.fire({ title: 'Logout?', showCancelButton: true, confirmButtonText: 'Ya, Keluar' }).then((res) => {
             if (res.isConfirmed) {
-                await fetchAPI('logout', { sessionId: localStorage.getItem('sessionId') });
+                // 1. Kirim perintah logout ke server di latar belakang (tanpa await)
+                fetchAPI('logout', { sessionId: localStorage.getItem('sessionId') });
+                
+                // 2. Langsung hapus sesi lokal secara instan
                 localStorage.removeItem('sessionId'); 
                 currentUser = null;
+                
+                // 3. Langsung tampilkan halaman login (0 detik)
                 showLogin(); 
+                showToast('Berhasil logout', 'success');
             }
         });
     }

@@ -175,6 +175,7 @@
     .toast.success { border-color: var(--success); } .toast.error { border-color: var(--danger); }
     .hidden { display: none !important; }
 
+    /* ==================== MEDIA QUERIES (MOBILE) ==================== */
     @media (max-width: 768px) {
         .sidebar { transform: translateX(-100%); }
         .sidebar.active { transform: translateX(0); }
@@ -314,7 +315,7 @@
         <div class="login-box">
             <div class="login-header">
                 <div class="logo-wrapper"><i class="fas fa-qrcode"></i></div>
-                <h1>INVENTARIS PCNU GRESIK</h1><p>Sistem Informasi Manajemen Aset</p>
+                <h1>INVENTARIS PCNU</h1><p>Sistem Informasi Manajemen Aset</p>
             </div>
             <form id="loginForm">
                 <div class="form-group"><div class="input-wrapper"><input type="text" class="form-control" id="username" placeholder="Username" required><i class="fas fa-user"></i></div></div>
@@ -374,7 +375,14 @@
                 <!-- INVENTARIS TABLE -->
                 <div id="inventarisPage" class="page-content hidden">
                     <div class="table-container">
-                        <div class="table-header"><h2 class="table-title">Data Manajemen Aset</h2><div style="display:flex; gap:10px;"><button class="btn btn-success" onclick="exportExcelXLSX(currentTipeAset)"><i class="fas fa-file-excel"></i> Export XLSX</button><button class="btn btn-secondary" onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> Download PDF</button><button class="btn btn-primary" onclick="showAddModal()"><i class="fas fa-plus"></i> Tambah Data</button></div></div>
+                        <div class="table-header">
+                            <h2 class="table-title">Data Manajemen Aset</h2>
+                            <div style="display:flex; gap:10px;">
+                                <!-- Tombol Export XLSX dihilangkan dari sini -->
+                                <button class="btn btn-secondary" onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> Download PDF</button>
+                                <button class="btn btn-primary" onclick="showAddModal()"><i class="fas fa-plus"></i> Tambah Data</button>
+                            </div>
+                        </div>
                         <div class="table-controls">
                             <div><span>Tampilkan</span> <select class="table-limit" onchange="updateTableState('inventaris', 'limit', this.value)"><option value="10">10</option><option value="50">50</option><option value="all">Semua</option></select></div>
                             <div><input type="text" class="table-search" placeholder="Cari aset..." onkeyup="updateTableState('inventaris', 'search', this.value)"></div>
@@ -424,35 +432,32 @@
                             </div>
                             
                             <div id="previewContainer" style="display:none;">
-    <h3 style="font-size:14px; margin-bottom:10px;">Preview Data</h3>
-    <div style="display:flex; justify-content:space-between; margin-bottom:10px; flex-wrap: wrap; gap: 10px;">
-        <div><span class="badge badge-success" id="validCount">0 Valid</span> <span class="badge badge-danger" id="invalidCount">0 Invalid</span></div>
-        <button class="btn btn-primary" id="btnConfirmImport" onclick="confirmImport()"><i class="fas fa-save"></i> Simpan Data Valid</button>
-    </div>
-    
-    <!-- Pastikan div class="table-responsive" ini ada agar tabel bisa di-scroll horizontal -->
-    <div class="table-responsive" style="max-height: 400px; border:1px solid #e2e8f0; border-radius:8px; overflow: auto;">
-        <table style="font-size:12px; width: 100%; min-width: 600px;">
-            <thead><tr id="previewHead"></tr></thead>
-            <tbody id="previewBody"></tbody>
-        </table>
-    </div>
-</div>
+                                <h3 style="font-size:14px; margin-bottom:10px;">Preview Data</h3>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:10px; flex-wrap: wrap; gap: 10px;">
+                                    <div><span class="badge badge-success" id="validCount">0 Valid</span> <span class="badge badge-danger" id="invalidCount">0 Invalid</span></div>
+                                    <button class="btn btn-primary" id="btnConfirmImport" onclick="confirmImport()"><i class="fas fa-save"></i> Simpan Data Valid</button>
+                                </div>
+                                <div class="table-responsive" style="max-height: 400px; border:1px solid #e2e8f0; border-radius:8px; overflow: auto;">
+                                    <table style="font-size:12px; width: 100%; min-width: 600px;">
+                                        <thead><tr id="previewHead"></tr></thead>
+                                        <tbody id="previewBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
 
-                       <!-- TAB EXPORT -->
-<div id="sectionExport" style="display:none;">
-    <div style="background:#f8fafc; padding:20px; border-radius:10px; border:1px solid #e2e8f0;">
-        <h3 style="font-size:14px; margin-bottom:15px; color:var(--primary);"><i class="fas fa-info-circle"></i> Export Data Master</h3>
-        <p style="font-size:13px; color:var(--gray); margin-bottom:20px;">Fitur ini akan mengekspor seluruh data inventaris sesuai dengan jenis aset. Data yang dihasilkan berupa format Excel asli (.xlsx) tanpa baris total uang, siap digunakan dengan filter aktif.</p>
-        <!-- Menggunakan flex-wrap dan width 100% pada media query -->
-        <div style="display:flex; gap:10px; flex-direction: column;">
-            <button class="btn btn-success" style="width: 100%; justify-content: center;" onclick="exportExcelXLSX('Barang')"><i class="fas fa-file-excel"></i> Export Barang</button>
-            <button class="btn btn-success" style="width: 100%; justify-content: center;" onclick="exportExcelXLSX('Tanah')"><i class="fas fa-file-excel"></i> Export Tanah</button>
-            <button class="btn btn-success" style="width: 100%; justify-content: center;" onclick="exportExcelXLSX('Kendaraan')"><i class="fas fa-file-excel"></i> Export Kendaraan</button>
-        </div>
-    </div>
-</div>
+                        <!-- TAB EXPORT -->
+                        <div id="sectionExport" style="display:none;">
+                            <div style="background:#f8fafc; padding:20px; border-radius:10px; border:1px solid #e2e8f0;">
+                                <h3 style="font-size:14px; margin-bottom:15px; color:var(--primary);"><i class="fas fa-info-circle"></i> Export Data Master</h3>
+                                <p style="font-size:13px; color:var(--gray); margin-bottom:20px;">Fitur ini akan mengekspor seluruh data inventaris sesuai dengan jenis aset. Data yang dihasilkan berupa format Excel asli (.xlsx) tanpa baris total uang, siap digunakan dengan filter aktif.</p>
+                                <div style="display:flex; gap:10px; flex-direction: column;">
+                                    <button class="btn btn-success" style="width: 100%; justify-content: center;" onclick="exportExcelXLSX('Barang')"><i class="fas fa-file-excel"></i> Export Barang</button>
+                                    <button class="btn btn-success" style="width: 100%; justify-content: center;" onclick="exportExcelXLSX('Tanah')"><i class="fas fa-file-excel"></i> Export Tanah</button>
+                                    <button class="btn btn-success" style="width: 100%; justify-content: center;" onclick="exportExcelXLSX('Kendaraan')"><i class="fas fa-file-excel"></i> Export Kendaraan</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -665,7 +670,7 @@
     let editUserMode = false;
     let inventoryChart = null;
     let currentTipeAset = 'Barang'; 
-    let currentValidImportData = []; // Array data excel yang valid dan siap upload
+    let currentValidImportData = []; 
 
     let globalData = { stats: {}, inventaris: [], laporan: [], users: [], config: {} };
     let tableState = { inventaris: { limit: 10, search: '' }, laporan: { limit: 10, search: '' }, users: { limit: 10, search: '' } };
@@ -1077,14 +1082,12 @@
 
         for (let i = 1; i < rows.length; i++) {
             const r = rows[i];
-            // Skip baris jika benar-benar kosong
             if (!r || r.length === 0 || r.join('').trim() === '') continue; 
             
             let isValid = true;
             let statusText = "OK";
             let itemData = {};
 
-            // Validasi Sederhana berdasar Template Type
             if (type === 'Barang') {
                 if (!r[0] || !r[9]) { isValid = false; statusText = "Nama/Lokasi kosong"; }
                 itemData = {
@@ -1106,7 +1109,6 @@
                     tglPerolehan: r[5]||'', field2: parseFloat(r[6])||0, field3: parseFloat(r[7])||0, 
                     pj: r[8]||'', lokasi: r[9]||''
                 };
-                // Menyambung Tahun dan BPKB ke field5 (sesuai format lama)
                 let thn = r[2]||''; let bpkb = r[3]||'';
                 itemData.field5 = thn ? `${bpkb} / Thn ${thn}` : bpkb;
             }
@@ -1156,11 +1158,9 @@
 
     function exportExcelXLSX(tipe) {
         let d = globalData.inventaris || [];
-        // Jika export dipanggil dari tabel utama dengan filter pencarian yang aktif, gunakan data tabel tersebut
         if (tipe === currentTipeAset && document.getElementById('inventarisPage').classList.contains('hidden') === false) {
             d = processTableData('inventaris');
         } else {
-            // Jika dipanggil dari tab export master, ekspor semua yang sesuai tipe
             d = d.filter(i => i.tipeAset === tipe);
         }
         
@@ -1181,8 +1181,6 @@
         }
 
         const ws = XLSX.utils.aoa_to_sheet([headers, ...aoa]);
-        
-        // Pengaturan Filter & Lebar Kolom
         ws['!autofilter'] = { ref: XLSX.utils.encode_range(XLSX.utils.decode_range(ws['!ref'])) };
         ws['!views'] = [{ state: 'frozen', ySplit: 1 }];
         ws['!cols'] = headers.map(h => ({ wch: 18 }));
@@ -1215,6 +1213,16 @@
             document.getElementById('loading_' + type).style.display = 'none';
             if (res && res.success) { document.getElementById('conf_logo_' + type).value = res.url; document.getElementById('preview_logo_' + type).src = res.url; document.getElementById('preview_logo_' + type).style.display = 'block'; showToast('Sukses', 'success'); }
         }; r.readAsDataURL(file);
+    }
+
+    // ==========================================
+    // EXPORT PDF
+    // ==========================================
+    async function downloadPDF() {
+        const btn = document.querySelector('#inventarisPage .btn-secondary'); btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Proses...'; btn.disabled = true;
+        const res = await fetchAPI('generatePDF', { tipeKategori: currentTipeAset });
+        btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF'; btn.disabled = false;
+        if (res && res.success) { const a = document.createElement('a'); a.href = "data:application/pdf;base64," + res.base64; a.download = res.filename; a.click(); } else showToast('Gagal', 'error');
     }
 
     // ==========================================

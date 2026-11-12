@@ -174,13 +174,13 @@
     }
 
     /* ==================== SWEETALERT 2 CUSTOM ELEGAN ==================== */
-    /* Latar blur */
-    div:where(.swal2-container).swal2-backdrop-show,
-    div:where(.swal2-container).swal2-noanimation,
-    .swal2-container.swal2-backdrop-show{
-      background:rgba(15,23,42,.55)!important;
-      backdrop-filter:blur(5px)!important;
-      -webkit-backdrop-filter:blur(5px)!important;
+    /* Latar blur KHUSUS POPUP (Bukan Toast) */
+    body:not(.swal2-toast-shown) .swal2-container.swal2-backdrop-show,
+    body:not(.swal2-toast-shown) div:where(.swal2-container).swal2-backdrop-show,
+    body:not(.swal2-toast-shown) div:where(.swal2-container).swal2-noanimation {
+      background: rgba(15, 23, 42, 0.55) !important;
+      backdrop-filter: blur(5px) !important;
+      -webkit-backdrop-filter: blur(5px) !important;
     }
 
     /* KOTAK */

@@ -6,9 +6,13 @@
     <title>Sistem Inventaris PCNU Gresik</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- LIBRARIES -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
 <style>
     /* ==================== RESET & VARIABLES ==================== */
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -64,6 +68,7 @@
     .form-control { width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 14px; transition: all 0.3s; background: #fff; }
     .login-container ~ .app-container .form-control, .modal .form-control { background: #fff; color: var(--dark); }
     .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15); }
+    
     .btn { padding: 12px 24px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
     .btn-primary { background: var(--grad-primary); color: white; box-shadow: 0 4px 12px rgba(67, 97, 238, 0.25); }
     .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(67, 97, 238, 0.35); }
@@ -72,6 +77,8 @@
     .btn-danger { background: var(--grad-danger); color: white; }
     .btn-secondary { background: #e2e8f0; color: var(--dark); }
     .btn-secondary:hover { background: #cbd5e1; }
+    .btn-info { background: var(--info); color: white; }
+    .btn-info:hover { background: #3b82f6; }
     .btn-sm { font-size: 12px; padding: 8px 16px; }
 
     .app-container { display: none; min-height: 100vh; }
@@ -144,6 +151,11 @@
     .btn-edit { background: rgba(67, 97, 238, 0.1); color: var(--primary); } .btn-edit:hover { background: var(--primary); color: white; }
     .btn-delete { background: rgba(239, 71, 111, 0.1); color: var(--danger); } .btn-delete:hover { background: var(--danger); color: white; }
 
+    /* IMPORT/EXPORT PAGE TABS */
+    .tab-btn { padding: 10px 20px; font-weight: 600; cursor: pointer; border-radius: 8px; border: 1px solid transparent; background: #f1f5f9; color: var(--gray); transition: 0.3s; }
+    .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(67, 97, 238, 0.2); }
+    .invalid-row { background-color: #fee2e2 !important; }
+
     /* MODAL */
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
     .modal.active { display: flex; animation: fadeIn 0.2s; }
@@ -182,8 +194,6 @@
       backdrop-filter: blur(5px) !important;
       -webkit-backdrop-filter: blur(5px) !important;
     }
-
-    /* KOTAK */
     .swal2-popup:not(.swal2-toast){
       font-family:'Inter',system-ui,sans-serif!important;
       width:26rem!important; max-width:92vw!important;
@@ -193,8 +203,6 @@
       border:1px solid rgba(226,232,240,.9)!important;
       box-shadow:0 30px 70px -15px rgba(15,23,42,.45)!important;
     }
-
-    /* IKON */
     .swal2-popup:not(.swal2-toast) .swal2-icon{
       width:76px!important; height:76px!important;
       margin:0 auto 1.1rem!important;
@@ -215,13 +223,11 @@
       color:#059669!important;
       box-shadow:0 0 0 8px rgba(5,150,105,.07)!important;
     }
-    /* sembunyikan elemen bawaan ikon success */
     .swal2-popup .swal2-icon.swal2-success [class^=swal2-success-line],
     .swal2-popup .swal2-icon.swal2-success [class^=swal2-success-circular-line],
     .swal2-popup .swal2-icon.swal2-success .swal2-success-ring,
     .swal2-popup .swal2-icon.swal2-success .swal2-success-fix{display:none!important;}
 
-    /* TEKS */
     .swal2-popup:not(.swal2-toast) .swal2-title{
       font-size:1.35rem!important; font-weight:700!important;
       color:var(--nu-text)!important; padding:0!important; margin:0 0 .4rem!important;
@@ -232,7 +238,6 @@
     }
     .swal2-html-container b{color:var(--nu-text);font-weight:600;}
 
-    /* TOMBOL */
     .swal2-popup:not(.swal2-toast) .swal2-actions{
       margin-top:1.6rem!important; gap:.75rem!important; width:100%!important; flex-wrap:nowrap!important;
     }
@@ -261,13 +266,11 @@
     .swal2-popup .swal2-confirm:focus,
     .swal2-popup .swal2-cancel:focus{box-shadow:0 0 0 3px rgba(79,70,229,.3)!important;}
 
-    /* ANIMASI */
     .nu-show{animation:nuIn .28s cubic-bezier(.2,.9,.3,1.2)!important;}
     .nu-hide{animation:nuOut .18s ease-in forwards!important;}
     @keyframes nuIn{from{opacity:0;transform:translateY(14px) scale(.94);}to{opacity:1;transform:none;}}
     @keyframes nuOut{to{opacity:0;transform:translateY(8px) scale(.96);}}
 
-    /* Toast */
     .swal2-popup.swal2-toast{
       font-family:'Inter',sans-serif!important; border-radius:14px!important;
       box-shadow:0 14px 30px -10px rgba(15,23,42,.35)!important; padding:.85rem 1.1rem!important;
@@ -309,6 +312,7 @@
                 <a class="menu-item" onclick="showPage('barang')"><i class="fas fa-boxes"></i><span>Inventaris Barang</span></a>
                 <a class="menu-item" onclick="showPage('tanah')"><i class="fas fa-map"></i><span>Inventaris Tanah</span></a>
                 <a class="menu-item" onclick="showPage('kendaraan')"><i class="fas fa-car"></i><span>Inventaris Kendaraan</span></a>
+                <a class="menu-item" onclick="showPage('importexport')" id="menuImportExport"><i class="fas fa-file-import"></i><span>Import/Export</span></a>
                 <a class="menu-item" onclick="showPage('scan')"><i class="fas fa-qrcode"></i><span>Scan QR</span></a>
                 <a class="menu-item" onclick="showPage('laporan')" id="menuLaporan"><i class="fas fa-file-alt"></i><span>Log Aktivitas</span></a>
                 <a class="menu-item" onclick="showPage('users')" id="menuUsers"><i class="fas fa-users"></i><span>Pengguna</span></a>
@@ -347,7 +351,7 @@
                 <!-- INVENTARIS TABLE -->
                 <div id="inventarisPage" class="page-content hidden">
                     <div class="table-container">
-                        <div class="table-header"><h2 class="table-title">Data Manajemen Aset</h2><div style="display:flex; gap:10px;"><button class="btn btn-success" onclick="exportExcel()"><i class="fas fa-file-excel"></i> Export CSV</button><button class="btn btn-secondary" onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> Download PDF</button><button class="btn btn-primary" onclick="showAddModal()"><i class="fas fa-plus"></i> Tambah Data</button></div></div>
+                        <div class="table-header"><h2 class="table-title">Data Manajemen Aset</h2><div style="display:flex; gap:10px;"><button class="btn btn-success" onclick="exportExcelXLSX(currentTipeAset)"><i class="fas fa-file-excel"></i> Export XLSX</button><button class="btn btn-secondary" onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> Download PDF</button><button class="btn btn-primary" onclick="showAddModal()"><i class="fas fa-plus"></i> Tambah Data</button></div></div>
                         <div class="table-controls">
                             <div><span>Tampilkan</span> <select class="table-limit" onchange="updateTableState('inventaris', 'limit', this.value)"><option value="10">10</option><option value="50">50</option><option value="all">Semua</option></select></div>
                             <div><input type="text" class="table-search" placeholder="Cari aset..." onkeyup="updateTableState('inventaris', 'search', this.value)"></div>
@@ -357,6 +361,71 @@
                                 <thead><tr><th>Foto</th><th>Kode</th><th>Nama Aset</th><th>Kategori</th><th>Spesifikasi & Nilai</th><th>Status</th><th>Lokasi</th><th>Aksi</th></tr></thead>
                                 <tbody id="inventarisTableBody"><tr><td colspan="8" style="text-align: center;">Memuat data...</td></tr></tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- IMPORT EXPORT PAGE -->
+                <div id="importexportPage" class="page-content hidden">
+                    <div class="table-container" style="padding:24px;">
+                        <h2 class="table-title" style="margin-bottom: 20px;">Menu Import & Export Data Excel (XLSX)</h2>
+                        <div style="display:flex; gap:10px; margin-bottom: 30px; border-bottom:1px solid #e2e8f0; padding-bottom:15px;">
+                            <button class="tab-btn active" id="tabImportBtn" onclick="switchImportExportTab('import')"><i class="fas fa-upload"></i> Import Data Excel</button>
+                            <button class="tab-btn" id="tabExportBtn" onclick="switchImportExportTab('export')"><i class="fas fa-download"></i> Export Data Excel</button>
+                        </div>
+                        
+                        <!-- TAB IMPORT -->
+                        <div id="sectionImport">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">1. Pilih Jenis Inventaris</label>
+                                    <select id="importType" class="form-control" onchange="resetImportState()">
+                                       <option value="Barang">Aset Barang</option>
+                                       <option value="Tanah">Aset Tanah</option>
+                                       <option value="Kendaraan">Aset Kendaraan</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">2. Download Template XLSX</label>
+                                    <button class="btn btn-info" onclick="downloadTemplateXLSX()"><i class="fas fa-file-download"></i> Download Template</button>
+                                </div>
+                            </div>
+                            
+                            <hr style="margin:20px 0; border:0; border-top:1px dashed #ccc;">
+                            
+                            <div class="form-group" style="margin-bottom: 30px;">
+                                <label class="form-label">3. Upload File XLSX yang Telah Diisi</label>
+                                <input type="file" id="importFile" accept=".xlsx, .xls" style="display:none;" onchange="handleImportFile(event)">
+                                <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()"><i class="fas fa-upload"></i> Pilih File Excel</button>
+                                <span id="importFileName" style="margin-left:15px; font-size:13px; font-style:italic; color:var(--gray);">Belum ada file dipilih</span>
+                            </div>
+                            
+                            <div id="previewContainer" style="display:none;">
+                                <h3 style="font-size:14px; margin-bottom:10px;">Preview Data</h3>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                                    <div><span class="badge badge-success" id="validCount">0 Valid</span> <span class="badge badge-danger" id="invalidCount">0 Invalid</span></div>
+                                    <button class="btn btn-primary" id="btnConfirmImport" onclick="confirmImport()"><i class="fas fa-save"></i> Simpan Data Valid</button>
+                                </div>
+                                <div class="table-responsive" style="max-height: 400px; border:1px solid #e2e8f0; border-radius:8px;">
+                                    <table style="font-size:12px;">
+                                        <thead><tr id="previewHead"></tr></thead>
+                                        <tbody id="previewBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB EXPORT -->
+                        <div id="sectionExport" style="display:none;">
+                            <div style="background:#f8fafc; padding:20px; border-radius:10px; border:1px solid #e2e8f0;">
+                                <h3 style="font-size:14px; margin-bottom:15px; color:var(--primary);"><i class="fas fa-info-circle"></i> Export Data Master</h3>
+                                <p style="font-size:13px; color:var(--gray); margin-bottom:20px;">Fitur ini akan mengekspor seluruh data inventaris sesuai dengan jenis aset. Data yang dihasilkan berupa format Excel asli (.xlsx) tanpa baris total uang, siap digunakan dengan filter aktif.</p>
+                                <div style="display:flex; gap:15px; flex-wrap:wrap;">
+                                    <button class="btn btn-success" onclick="exportExcelXLSX('Barang')"><i class="fas fa-file-excel"></i> Export Barang</button>
+                                    <button class="btn btn-success" onclick="exportExcelXLSX('Tanah')"><i class="fas fa-file-excel"></i> Export Tanah</button>
+                                    <button class="btn btn-success" onclick="exportExcelXLSX('Kendaraan')"><i class="fas fa-file-excel"></i> Export Kendaraan</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -570,33 +639,25 @@
     let editUserMode = false;
     let inventoryChart = null;
     let currentTipeAset = 'Barang'; 
+    let currentValidImportData = []; // Array data excel yang valid dan siap upload
 
     let globalData = { stats: {}, inventaris: [], laporan: [], users: [], config: {} };
     let tableState = { inventaris: { limit: 10, search: '' }, laporan: { limit: 10, search: '' }, users: { limit: 10, search: '' } };
 
     // ==========================================
-    // API WRAPPER
+    // API WRAPPER (DENGAN SESI)
     // ==========================================
-   async function fetchAPI(action, payload = {}) {
+    async function fetchAPI(action, payload = {}) {
         payload.action = action;
-        
-        // SELALU SISIPKAN SESSION ID (KUNCI MASUK) KE DALAM PAYLOAD
         payload.sessionId = localStorage.getItem('sessionId') || '';
         
         try {
-            const response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify(payload)
-            });
+            const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
             const data = await response.json();
             
-            // Auto-logout jika backend menolak sesi (karena kadaluarsa atau ditembak dari luar)
             if (data.message && data.message.includes("Akses Ditolak")) {
-                localStorage.removeItem('sessionId');
-                currentUser = null;
-                showLogin();
+                localStorage.removeItem('sessionId'); currentUser = null; showLogin();
             }
-            
             return data;
         } catch (error) {
             console.error(error);
@@ -604,10 +665,7 @@
         }
     }
 
-    window.onload = function() {
-        checkSession();
-        loadPublicConfig();
-    };
+    window.onload = function() { checkSession(); loadPublicConfig(); };
 
     function parseDriveUrl(url) {
         if (!url) return url;
@@ -636,39 +694,26 @@
         const password = document.getElementById('password').value;
         const btn = document.getElementById('btnLogin');
         
-        btn.disabled = true;
-        btn.innerHTML = '<div class="loading-spinner"></div>';
+        btn.disabled = true; btn.innerHTML = '<div class="loading-spinner"></div>';
         
         const res = await fetchAPI('login', { username, password });
         
         if (res && res.success) { 
-            localStorage.setItem('sessionId', res.user.sessionId); 
-            currentUser = res.user;
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            btn.innerHTML = 'MASUK SISTEM <i class="fas fa-arrow-right"></i>';
-            btn.disabled = false;
+            localStorage.setItem('sessionId', res.user.sessionId); currentUser = res.user;
+            document.getElementById('username').value = ''; document.getElementById('password').value = '';
+            btn.innerHTML = 'MASUK SISTEM <i class="fas fa-arrow-right"></i>'; btn.disabled = false;
             showApp(); 
         } else {
             showToast(res ? res.message : 'Koneksi gagal', 'error');
-            btn.disabled = false;
-            btn.innerHTML = 'MASUK SISTEM <i class="fas fa-arrow-right"></i>';
+            btn.disabled = false; btn.innerHTML = 'MASUK SISTEM <i class="fas fa-arrow-right"></i>';
         }
     });
 
-    async function logoutUser() {
+    function logoutUser() {
         Swal.fire({ title: 'Logout?', showCancelButton: true, confirmButtonText: 'Ya, Keluar' }).then((res) => {
             if (res.isConfirmed) {
-                // 1. Kirim perintah logout ke server di latar belakang (tanpa await)
                 fetchAPI('logout', { sessionId: localStorage.getItem('sessionId') });
-                
-                // 2. Langsung hapus sesi lokal secara instan
-                localStorage.removeItem('sessionId'); 
-                currentUser = null;
-                
-                // 3. Langsung tampilkan halaman login (0 detik)
-                showLogin(); 
-                showToast('Berhasil logout', 'success');
+                localStorage.removeItem('sessionId'); currentUser = null; showLogin(); showToast('Berhasil logout', 'success');
             }
         });
     }
@@ -678,25 +723,17 @@
         if (!sessionId) { showLogin(); return; }
         
         const res = await fetchAPI('checkSession', { sessionId });
-        if (res && res.success) {
-            currentUser = res.user;
-            showApp();
-        } else {
-            localStorage.removeItem('sessionId'); 
-            showLogin();
-        }
+        if (res && res.success) { currentUser = res.user; showApp(); } 
+        else { localStorage.removeItem('sessionId'); showLogin(); }
     }
 
     function showLogin() {
-        document.getElementById('initialLoader').style.display = 'none';
-        document.getElementById('loginPage').style.display = 'flex';
-        document.getElementById('appContainer').classList.remove('active');
-        loadPublicConfig();
+        document.getElementById('initialLoader').style.display = 'none'; document.getElementById('loginPage').style.display = 'flex';
+        document.getElementById('appContainer').classList.remove('active'); loadPublicConfig();
     }
 
     function showApp() {
-        document.getElementById('initialLoader').style.display = 'none';
-        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('initialLoader').style.display = 'none'; document.getElementById('loginPage').style.display = 'none';
         document.getElementById('appContainer').classList.add('active');
         
         if (currentUser) {
@@ -714,10 +751,9 @@
 
     async function fetchAllData(isRefresh = false) {
         if(!isRefresh) Swal.fire({ title: 'Sinkronisasi...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
-        
         const res = await fetchAPI('getAllSystemData');
-        
         if(!isRefresh) Swal.close();
+        
         if (res && res.success) {
             globalData = res.data;
             const act = document.querySelector('.menu-item.active');
@@ -726,9 +762,7 @@
                 if(match) showPage(match[1]);
             } else showPage('dashboard');
             if(isRefresh) showToast('Data diperbarui', 'success');
-        } else {
-            showToast('Gagal memuat data', 'error');
-        }
+        } else { showToast('Gagal memuat data', 'error'); }
     }
 
     // ==========================================
@@ -750,7 +784,7 @@
         document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
         document.querySelectorAll('.menu-item').forEach(item => { if(item.getAttribute('onclick') && item.getAttribute('onclick').includes(page)) item.classList.add('active'); });
 
-        const pageMap = { 'dashboard': 'dashboardPage', 'barang': 'inventarisPage', 'tanah': 'inventarisPage', 'kendaraan': 'inventarisPage', 'scan': 'scanPage', 'laporan': 'laporanPage', 'users': 'usersPage', 'config': 'configPage' };
+        const pageMap = { 'dashboard': 'dashboardPage', 'barang': 'inventarisPage', 'tanah': 'inventarisPage', 'kendaraan': 'inventarisPage', 'importexport': 'importexportPage', 'scan': 'scanPage', 'laporan': 'laporanPage', 'users': 'usersPage', 'config': 'configPage' };
         const targetId = pageMap[page] || 'dashboardPage';
         if (document.getElementById(targetId)) document.getElementById(targetId).classList.remove('hidden');
 
@@ -766,6 +800,7 @@
             if (page === 'laporan') renderLaporanTable();
             if (page === 'users') renderUsersTable();
             if (page === 'config') fillConfigFormFromLocal();
+            if (page === 'importexport') document.getElementById('pageTitle').innerText = 'Import & Export';
         }
     }
 
@@ -938,6 +973,200 @@
     function closeUserModal() { document.getElementById('userModal').classList.remove('active'); }
 
     // ==========================================
+    // IMPORT & EXPORT EXCEL VIA SHEETJS
+    // ==========================================
+    function switchImportExportTab(tab) {
+        document.getElementById('tabImportBtn').classList.remove('active');
+        document.getElementById('tabExportBtn').classList.remove('active');
+        document.getElementById('sectionImport').style.display = 'none';
+        document.getElementById('sectionExport').style.display = 'none';
+        
+        if (tab === 'import') {
+            document.getElementById('tabImportBtn').classList.add('active');
+            document.getElementById('sectionImport').style.display = 'block';
+        } else {
+            document.getElementById('tabExportBtn').classList.add('active');
+            document.getElementById('sectionExport').style.display = 'block';
+        }
+    }
+
+    function resetImportState() {
+        document.getElementById('importFile').value = '';
+        document.getElementById('importFileName').innerText = 'Belum ada file dipilih';
+        document.getElementById('previewContainer').style.display = 'none';
+        currentValidImportData = [];
+    }
+
+    function downloadTemplateXLSX() {
+        const type = document.getElementById('importType').value;
+        let headers = []; let data = [];
+        
+        if (type === 'Barang') {
+            headers = ['Nama Aset', 'Kategori', 'Tanggal Perolehan (YYYY-MM-DD)', 'Kuantitas', 'Harga Beli (Angka)', 'Nilai Pasar (Angka)', 'Kondisi', 'Sumber Perolehan', 'Penanggung Jawab', 'Lokasi Fisik'];
+            data = [['Komputer Asus', 'Elektronik', '2026-11-12', 5, 5000000, 4500000, 'Baik', 'Hibah', 'Bapak Agus', 'Ruang Admin']];
+        } else if (type === 'Tanah') {
+            headers = ['Nama Aset Tanah', 'Luas m2 (Angka)', 'Status Kepemilikan', 'Nomor Sertifikat', 'Tanggal Perolehan (YYYY-MM-DD)', 'Harga Perolehan (Angka)', 'Nilai Pasar (Angka)', 'Penanggung Jawab', 'Lokasi Fisik'];
+            data = [['Tanah Sawah Ngasin', 500, 'Wakaf', 'WKF-12345', '2026-11-12', 50000000, 75000000, 'Bapak Budi', 'Desa Ngasin']];
+        } else if (type === 'Kendaraan') {
+            headers = ['Nama Kendaraan', 'Nomor Polisi', 'Tahun Pembuatan (Angka)', 'Nomor BPKB', 'Kondisi', 'Tanggal Perolehan (YYYY-MM-DD)', 'Harga Beli (Angka)', 'Nilai Pasar (Angka)', 'Penanggung Jawab', 'Lokasi Fisik'];
+            data = [['Mobil Avanza', 'W 1234 XY', 2020, 'BPKB-987654', 'Baik', '2026-11-12', 150000000, 140000000, 'Bapak Citra', 'Garasi Kantor']];
+        }
+
+        const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
+        ws['!cols'] = headers.map(h => ({ wch: 25 }));
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Template " + type);
+        XLSX.writeFile(wb, `Template_Import_${type}.xlsx`);
+    }
+
+    function handleImportFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        document.getElementById('importFileName').innerText = file.name;
+        const type = document.getElementById('importType').value;
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, {type: 'array', cellDates: true});
+            const firstSheet = workbook.SheetNames[0];
+            const rawJson = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet], {header: 1, raw: false, dateNF: 'yyyy-mm-dd'});
+            
+            processImportPreview(rawJson, type);
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function processImportPreview(rows, type) {
+        if(rows.length < 2) { showToast('File kosong atau tidak ada data', 'error'); return; }
+        
+        const previewHead = document.getElementById('previewHead');
+        const previewBody = document.getElementById('previewBody');
+        previewHead.innerHTML = '<th>No</th><th>Status</th>' + rows[0].map(h => `<th>${h}</th>`).join('');
+        previewBody.innerHTML = '';
+        
+        currentValidImportData = [];
+        let valid = 0, invalid = 0;
+
+        for (let i = 1; i < rows.length; i++) {
+            const r = rows[i];
+            // Skip baris jika benar-benar kosong
+            if (!r || r.length === 0 || r.join('').trim() === '') continue; 
+            
+            let isValid = true;
+            let statusText = "OK";
+            let itemData = {};
+
+            // Validasi Sederhana berdasar Template Type
+            if (type === 'Barang') {
+                if (!r[0] || !r[9]) { isValid = false; statusText = "Nama/Lokasi kosong"; }
+                itemData = {
+                    namaBarang: r[0]||'', kategori: r[1]||'Lainnya', tglPerolehan: r[2]||'', 
+                    field1: parseInt(r[3])||0, field2: parseFloat(r[4])||0, field3: parseFloat(r[5])||0, 
+                    field4: r[6]||'Baik', field5: r[7]||'', pj: r[8]||'', lokasi: r[9]||''
+                };
+            } else if (type === 'Tanah') {
+                if (!r[0] || !r[8]) { isValid = false; statusText = "Nama/Lokasi kosong"; }
+                itemData = {
+                    namaBarang: r[0]||'', field1: parseFloat(r[1])||0, field4: r[2]||'', field5: r[3]||'', 
+                    tglPerolehan: r[4]||'', field2: parseFloat(r[5])||0, field3: parseFloat(r[6])||0, 
+                    pj: r[7]||'', lokasi: r[8]||''
+                };
+            } else if (type === 'Kendaraan') {
+                if (!r[0] || !r[9]) { isValid = false; statusText = "Nama/Lokasi kosong"; }
+                itemData = {
+                    namaBarang: r[0]||'', field1: r[1]||'', field4: r[4]||'Baik', 
+                    tglPerolehan: r[5]||'', field2: parseFloat(r[6])||0, field3: parseFloat(r[7])||0, 
+                    pj: r[8]||'', lokasi: r[9]||''
+                };
+                // Menyambung Tahun dan BPKB ke field5 (sesuai format lama)
+                let thn = r[2]||''; let bpkb = r[3]||'';
+                itemData.field5 = thn ? `${bpkb} / Thn ${thn}` : bpkb;
+            }
+
+            let trClass = isValid ? '' : 'class="invalid-row"';
+            let statHtml = isValid ? `<span style="color:var(--success); font-weight:bold;">${statusText}</span>` : `<span style="color:var(--danger); font-weight:bold;">${statusText}</span>`;
+            
+            let rowHtml = `<tr ${trClass}><td>${i}</td><td>${statHtml}</td>` + r.map(c => `<td>${c||''}</td>`).join('') + `</tr>`;
+            previewBody.innerHTML += rowHtml;
+
+            if (isValid) {
+                valid++;
+                currentValidImportData.push(itemData);
+            } else {
+                invalid++;
+            }
+        }
+
+        document.getElementById('validCount').innerText = `${valid} Valid`;
+        document.getElementById('invalidCount').innerText = `${invalid} Invalid`;
+        document.getElementById('previewContainer').style.display = 'block';
+        document.getElementById('btnConfirmImport').disabled = valid === 0;
+    }
+
+    async function confirmImport() {
+        if(currentValidImportData.length === 0) return;
+        const tipe = document.getElementById('importType').value;
+        const btn = document.getElementById('btnConfirmImport');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...'; btn.disabled = true;
+        
+        const res = await fetchAPI('importInventaris', { 
+            items: currentValidImportData, 
+            tipeAset: tipe,
+            editorName: currentUser ? currentUser.nama : 'Unknown' 
+        });
+
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Data Valid'; btn.disabled = false;
+        
+        if (res && res.success) { 
+            showToast(res.message, 'success'); 
+            resetImportState();
+            fetchAllData(true); 
+        } else { 
+            showToast(res ? res.message : 'Gagal Import', 'error'); 
+        }
+    }
+
+    function exportExcelXLSX(tipe) {
+        let d = globalData.inventaris || [];
+        // Jika export dipanggil dari tabel utama dengan filter pencarian yang aktif, gunakan data tabel tersebut
+        if (tipe === currentTipeAset && document.getElementById('inventarisPage').classList.contains('hidden') === false) {
+            d = processTableData('inventaris');
+        } else {
+            // Jika dipanggil dari tab export master, ekspor semua yang sesuai tipe
+            d = d.filter(i => i.tipeAset === tipe);
+        }
+        
+        if(d.length === 0) return showToast('Tidak ada data ' + tipe, 'warning');
+
+        let headers = [];
+        let aoa = [];
+
+        if (tipe === 'Barang') {
+            headers = ['No', 'Kode Aset', 'Nama Barang', 'Kategori', 'Kuantitas', 'Sumber Perolehan', 'Harga Beli', 'Nilai Pasar', 'Kondisi', 'Tanggal Perolehan', 'Penanggung Jawab', 'Lokasi Fisik'];
+            aoa = d.map((i, x) => [x+1, i.kodeBarang, i.namaBarang, i.kategori, parseInt(i.field1)||0, i.field5, parseFloat(i.field2)||0, parseFloat(i.field3)||0, i.field4, i.tglPerolehan, i.pj, i.lokasi]);
+        } else if (tipe === 'Tanah') {
+            headers = ['No', 'Kode Aset', 'Nama Tanah', 'Luas (m2)', 'Status Kepemilikan', 'Nomor Sertifikat', 'Harga Perolehan', 'Nilai Pasar', 'Tanggal Perolehan', 'Penanggung Jawab', 'Lokasi Fisik'];
+            aoa = d.map((i, x) => [x+1, i.kodeBarang, i.namaBarang, parseFloat(i.field1)||0, i.field4, i.field5, parseFloat(i.field2)||0, parseFloat(i.field3)||0, i.tglPerolehan, i.pj, i.lokasi]);
+        } else if (tipe === 'Kendaraan') {
+            headers = ['No', 'Kode Aset', 'Nama Kendaraan', 'Nomor Polisi', 'Tahun / BPKB', 'Kondisi', 'Harga Beli', 'Nilai Pasar', 'Tanggal Perolehan', 'Penanggung Jawab', 'Lokasi Fisik'];
+            aoa = d.map((i, x) => [x+1, i.kodeBarang, i.namaBarang, i.field1, i.field5, i.field4, parseFloat(i.field2)||0, parseFloat(i.field3)||0, i.tglPerolehan, i.pj, i.lokasi]);
+        }
+
+        const ws = XLSX.utils.aoa_to_sheet([headers, ...aoa]);
+        
+        // Pengaturan Filter & Lebar Kolom
+        ws['!autofilter'] = { ref: XLSX.utils.encode_range(XLSX.utils.decode_range(ws['!ref'])) };
+        ws['!views'] = [{ state: 'frozen', ySplit: 1 }];
+        ws['!cols'] = headers.map(h => ({ wch: 18 }));
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Data " + tipe);
+        XLSX.writeFile(wb, `Inventaris_${tipe}_` + new Date().toISOString().split('T')[0] + ".xlsx");
+    }
+
+    // ==========================================
     // UPLOAD FOTO/LOGO
     // ==========================================
     function handleInventoryFile() {
@@ -960,32 +1189,6 @@
             document.getElementById('loading_' + type).style.display = 'none';
             if (res && res.success) { document.getElementById('conf_logo_' + type).value = res.url; document.getElementById('preview_logo_' + type).src = res.url; document.getElementById('preview_logo_' + type).style.display = 'block'; showToast('Sukses', 'success'); }
         }; r.readAsDataURL(file);
-    }
-
-    // ==========================================
-    // EXPORT PDF & EXCEL
-    // ==========================================
-    async function downloadPDF() {
-        const btn = document.querySelector('#inventarisPage .btn-secondary'); btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Proses...'; btn.disabled = true;
-        const res = await fetchAPI('generatePDF', { tipeKategori: currentTipeAset });
-        btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF'; btn.disabled = false;
-        if (res && res.success) { const a = document.createElement('a'); a.href = "data:application/pdf;base64," + res.base64; a.download = res.filename; a.click(); } else showToast('Gagal', 'error');
-    }
-
-    function exportExcel() {
-        const data = processTableData('inventaris'); if(data.length === 0) return showToast('Kosong', 'warning');
-        let csv = ''; let tot = 0; const esc = t => t == null ? '""' : `"${String(t).replace(/"/g, '""')}"`;
-        if(currentTipeAset === 'Barang') csv = 'No,Kode Aset,Nama Barang,Kategori,Qty,Sumber,Harga Beli,Nilai Pasar,Kondisi,Tgl,Lokasi,PJ\n';
-        else if (currentTipeAset === 'Tanah') csv = 'No,Kode Aset,Nama Tanah,Luas (m2),Status,Sertifikat,Harga Beli,Nilai Pasar,Tgl,Lokasi,PJ\n';
-        else csv = 'No,Kode Aset,Nama Kendaraan,Nopol,Tahun/BPKB,Harga Beli,Nilai Pasar,Kondisi,Tgl,Lokasi,PJ\n';
-        data.forEach((i, x) => {
-            tot += parseFloat(i.field3) || 0;
-            if (currentTipeAset === 'Barang') csv += `${x+1},${esc(i.kodeBarang)},${esc(i.namaBarang)},${esc(i.kategori)},${esc(i.field1)},${esc(i.field5)},${i.field2},${i.field3},${esc(i.field4)},${esc(i.tglPerolehan)},${esc(i.lokasi)},${esc(i.pj)}\n`;
-            else if (currentTipeAset === 'Tanah') csv += `${x+1},${esc(i.kodeBarang)},${esc(i.namaBarang)},${esc(i.field1)},${esc(i.field4)},${esc(i.field5)},${i.field2},${i.field3},${esc(i.tglPerolehan)},${esc(i.lokasi)},${esc(i.pj)}\n`;
-            else csv += `${x+1},${esc(i.kodeBarang)},${esc(i.namaBarang)},${esc(i.field1)},${esc(i.field5)},${i.field2},${i.field3},${esc(i.field4)},${esc(i.tglPerolehan)},${esc(i.lokasi)},${esc(i.pj)}\n`;
-        });
-        csv += `TOTAL NILAI ${currentTipeAset.toUpperCase()}${currentTipeAset === 'Barang' ? ',,,,,,,' : (currentTipeAset === 'Tanah' ? ',,,,,,,' : ',,,,,,')}${tot}\n`;
-        const b = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' }); const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `Inventaris_${currentTipeAset}_` + Date.now() + ".csv"; a.click();
     }
 
     // ==========================================

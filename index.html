@@ -176,13 +176,36 @@
     .hidden { display: none !important; }
 
     @media (max-width: 768px) {
-        .sidebar { transform: translateX(-100%); } .sidebar.active { transform: translateX(0); }
-        .main-content, .sidebar.collapsed ~ .main-content { margin-left: 0; }
+        .sidebar { transform: translateX(-100%); }
+        .sidebar.active { transform: translateX(0); }
+        .main-content, .sidebar.collapsed ~ .main-content { margin-left: 0; width: 100vw; overflow-x: hidden; }
+        
+        .topbar { padding: 15px 20px; }
+        .content-area { padding: 15px; }
+        
         .main-content .sidebar-toggle { display: flex !important; margin-right: 15px; }
         .sidebar-header .sidebar-toggle { display: none !important; }
-        .form-grid { grid-template-columns: 1fr; }
-        .table-controls { flex-direction: column; align-items: stretch; }
+        
+        /* Grid pada form diubah menjadi satu kolom */
+        .form-grid { grid-template-columns: 1fr !important; }
+        .form-group[style*="grid-column"] { grid-column: span 1 !important; }
+        
+        /* Perbaikan Table Controls (Pencarian & Pagination) */
+        .table-controls { flex-direction: column; align-items: stretch; gap: 15px; }
         .table-search { width: 100%; }
+        
+        /* Perbaikan tombol Aksi Header (Export, PDF, Tambah) */
+        .table-header { flex-direction: column; align-items: flex-start; }
+        .table-header div { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .table-header div button { width: 100%; justify-content: center; }
+
+        /* Perbaikan Tab Import/Export di Mobile */
+        #importexportPage .table-container > div:first-of-type { flex-direction: column; gap: 10px; }
+        #importexportPage .tab-btn { width: 100%; text-align: center; }
+        
+        /* Menghindari modal terlalu lebar */
+        .modal-content { max-width: 95vw; max-height: 85vh; margin: 10px; }
+        .modal-body { padding: 15px; }
     }
 
     /* ==================== SWEETALERT 2 CUSTOM ELEGAN ==================== */
@@ -401,32 +424,35 @@
                             </div>
                             
                             <div id="previewContainer" style="display:none;">
-                                <h3 style="font-size:14px; margin-bottom:10px;">Preview Data</h3>
-                                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                                    <div><span class="badge badge-success" id="validCount">0 Valid</span> <span class="badge badge-danger" id="invalidCount">0 Invalid</span></div>
-                                    <button class="btn btn-primary" id="btnConfirmImport" onclick="confirmImport()"><i class="fas fa-save"></i> Simpan Data Valid</button>
-                                </div>
-                                <div class="table-responsive" style="max-height: 400px; border:1px solid #e2e8f0; border-radius:8px;">
-                                    <table style="font-size:12px;">
-                                        <thead><tr id="previewHead"></tr></thead>
-                                        <tbody id="previewBody"></tbody>
-                                    </table>
-                                </div>
-                            </div>
+    <h3 style="font-size:14px; margin-bottom:10px;">Preview Data</h3>
+    <div style="display:flex; justify-content:space-between; margin-bottom:10px; flex-wrap: wrap; gap: 10px;">
+        <div><span class="badge badge-success" id="validCount">0 Valid</span> <span class="badge badge-danger" id="invalidCount">0 Invalid</span></div>
+        <button class="btn btn-primary" id="btnConfirmImport" onclick="confirmImport()"><i class="fas fa-save"></i> Simpan Data Valid</button>
+    </div>
+    
+    <!-- Pastikan div class="table-responsive" ini ada agar tabel bisa di-scroll horizontal -->
+    <div class="table-responsive" style="max-height: 400px; border:1px solid #e2e8f0; border-radius:8px; overflow: auto;">
+        <table style="font-size:12px; width: 100%; min-width: 600px;">
+            <thead><tr id="previewHead"></tr></thead>
+            <tbody id="previewBody"></tbody>
+        </table>
+    </div>
+</div>
                         </div>
 
-                        <!-- TAB EXPORT -->
-                        <div id="sectionExport" style="display:none;">
-                            <div style="background:#f8fafc; padding:20px; border-radius:10px; border:1px solid #e2e8f0;">
-                                <h3 style="font-size:14px; margin-bottom:15px; color:var(--primary);"><i class="fas fa-info-circle"></i> Export Data Master</h3>
-                                <p style="font-size:13px; color:var(--gray); margin-bottom:20px;">Fitur ini akan mengekspor seluruh data inventaris sesuai dengan jenis aset. Data yang dihasilkan berupa format Excel asli (.xlsx) tanpa baris total uang, siap digunakan dengan filter aktif.</p>
-                                <div style="display:flex; gap:15px; flex-wrap:wrap;">
-                                    <button class="btn btn-success" onclick="exportExcelXLSX('Barang')"><i class="fas fa-file-excel"></i> Export Barang</button>
-                                    <button class="btn btn-success" onclick="exportExcelXLSX('Tanah')"><i class="fas fa-file-excel"></i> Export Tanah</button>
-                                    <button class="btn btn-success" onclick="exportExcelXLSX('Kendaraan')"><i class="fas fa-file-excel"></i> Export Kendaraan</button>
-                                </div>
-                            </div>
-                        </div>
+                       <!-- TAB EXPORT -->
+<div id="sectionExport" style="display:none;">
+    <div style="background:#f8fafc; padding:20px; border-radius:10px; border:1px solid #e2e8f0;">
+        <h3 style="font-size:14px; margin-bottom:15px; color:var(--primary);"><i class="fas fa-info-circle"></i> Export Data Master</h3>
+        <p style="font-size:13px; color:var(--gray); margin-bottom:20px;">Fitur ini akan mengekspor seluruh data inventaris sesuai dengan jenis aset. Data yang dihasilkan berupa format Excel asli (.xlsx) tanpa baris total uang, siap digunakan dengan filter aktif.</p>
+        <!-- Menggunakan flex-wrap dan width 100% pada media query -->
+        <div style="display:flex; gap:10px; flex-direction: column;">
+            <button class="btn btn-success" style="width: 100%; justify-content: center;" onclick="exportExcelXLSX('Barang')"><i class="fas fa-file-excel"></i> Export Barang</button>
+            <button class="btn btn-success" style="width: 100%; justify-content: center;" onclick="exportExcelXLSX('Tanah')"><i class="fas fa-file-excel"></i> Export Tanah</button>
+            <button class="btn btn-success" style="width: 100%; justify-content: center;" onclick="exportExcelXLSX('Kendaraan')"><i class="fas fa-file-excel"></i> Export Kendaraan</button>
+        </div>
+    </div>
+</div>
                     </div>
                 </div>
 
